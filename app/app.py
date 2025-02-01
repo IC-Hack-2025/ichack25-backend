@@ -5,7 +5,7 @@ import flask
 import flask_cors
 
 from datetime import date
-from core.timeline_node import TimelineNode
+from core.timeline_node import Timeline, TimelineConnection, TimelineNode
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
 ichack25_app.url_map.strict_slashes = False
@@ -29,12 +29,17 @@ def test():
 @ichack25_app.route('/after/<event>')
 def event(event: str):
     logging.info("fetching information about {event}")
-    nodes = [TimelineNode(
-        heading="Placeholder event",
-        date_start=date(1970, 1, 1),
-        date_end=date(1970, 1, 1)
-    )]
-    return json.dumps([node.to_dict() for node in nodes])
+
+    return Timeline(
+        nodes=[
+            TimelineNode(
+                heading="Placeholder",
+                date_start=date(1970, 1, 1),
+                date_end=date(1970, 1, 1)
+            )
+        ],
+        arcs=[]
+    ).to_json()
 
 
 logging.info(

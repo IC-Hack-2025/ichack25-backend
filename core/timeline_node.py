@@ -43,3 +43,7 @@ class TimelineConnection(DataModel):
     to_id: int
 
     connection_type: ConnectionType = Field(ConnectionType.CAUSED)
+
+class Timeline(DataModel):
+    nodes: list[TimelineNode] = Field(default_factory=list)
+    arcs: list[TimelineConnection] = Field(default_factory=list)
