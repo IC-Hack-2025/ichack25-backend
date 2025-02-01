@@ -2,7 +2,7 @@ from core.model.timeline import Timeline
 
 
 class SessionHandler:
-    sessions: dict[int, int]
+    sessions: dict[int, Timeline]
 
     def __init__(self):
         self.sessions = []
