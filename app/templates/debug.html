@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Page</title>
+</head>
+<body>
+    <h1>Debug Page</h1>
+    <h2>New query</h2>
+    <form action="{{ url_for('query_create') }}" method="POST">
+        <input type="text" name="query">
+        <input type="submit">
+    </form>
+</body>
+</html>
