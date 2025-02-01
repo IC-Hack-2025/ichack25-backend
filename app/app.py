@@ -6,8 +6,8 @@ import flask_socketio
 from datetime import date
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
-from app.session_handler import SessionHandler
 from core.process.timeline_generator import TimelineGenerator
+from app.session import SessionHandler
 
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
@@ -20,13 +20,13 @@ session_handler = SessionHandler()
 
 @socketio.on("connect")
 def handle_connect():
-    logging.info("client connected")
+    logging.info(f"client ${flask.request.sid} connected")
 
 
 @socketio.on("disconnect")
 def handle_disconnect():
-    session_handler.clear_timeline(flask.request.sid)
-    logging.info("client disconnected")
+    session_handler.clear_session(flask.request.sid)
+    logging.info(f"client ${flask.request.sid} disconnected")
 
 
 @socketio.on("request-timeline")
