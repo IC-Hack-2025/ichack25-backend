@@ -26,7 +26,7 @@ class TimelineContent(DataModel):
 
 
 class TimelineNode(DataModel):
-    node_id: int = Field(default_factory=next_id, frozen=True)
+    id: int = Field(default_factory=next_id, frozen=True)
     parents: list[int] = Field(default_factory=list)
     children: list[int] = Field(default_factory=list)
 
@@ -35,3 +35,4 @@ class TimelineNode(DataModel):
     date_end: date
 
     contents: list[TimelineContent] = Field(default_factory=list)
+    misconceptions: list[str] = Field(default_factory=list)

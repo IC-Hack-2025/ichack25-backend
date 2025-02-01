@@ -1,4 +1,5 @@
 import logging
+import json
 
 import flask
 import flask_cors
@@ -24,6 +25,16 @@ def test():
         date_end=date(2026, 6, 25),
     )
     return node.to_json()
+
+@ichack25_app.route('/after/<event>')
+def event(event: str):
+    logging.info("fetching information about {event}")
+    nodes = [TimelineNode(
+        heading="Placeholder event",
+        date_start=date(1970, 1, 1),
+        date_end=date(1970, 1, 1)
+    )]
+    return json.dumps([node.to_dict() for node in nodes])
 
 
 logging.info(
