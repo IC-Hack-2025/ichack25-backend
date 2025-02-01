@@ -28,7 +28,7 @@ def test():
 
 @ichack25_app.route('/after/<event>')
 def event(event: str):
-    logging.info("fetching information about {event}")
+    logging.info(f"fetching information about '{event}'")
 
     return Timeline(
         nodes=[
