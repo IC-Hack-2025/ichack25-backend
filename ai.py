@@ -1,9 +1,8 @@
 from datetime import date
-from typing import List, Optional
+from typing import List, Optional, Iterator
 from pydantic import BaseModel
 from openai import OpenAI
 from core.model.timeline_node import ConnectionType, TimelineConnection, TimelineNode
-
 
 EVENT_GRAPH_DEPTH: int = 3
 client = OpenAI()
@@ -36,8 +35,7 @@ class EventGraph:
     def __init__(self, start_event: str, depth: int = EVENT_GRAPH_DEPTH):
         self.start = start_event
         self.depth = depth
-
-    def get(self, event_name: Optional[str] = None, curr_depth: int = 0) -> iter[TimelineNode | TimelineConnection]:
+    def get(self, event_name: Optional[str] = None, curr_depth: int = 0) -> Iterator[TimelineNode | TimelineConnection]:
         if event_name is None:
             event_name = self.start
         if curr_depth > self.depth:
