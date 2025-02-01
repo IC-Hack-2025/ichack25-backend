@@ -9,12 +9,15 @@ from datetime import date
 from ai import query_openai
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
+from app.session_handler import SessionHandler
 
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
 ichack25_app.url_map.strict_slashes = False
 cors = flask_cors.CORS(ichack25_app, supports_credentials=True)
 socketio = flask_socketio.SocketIO(ichack25_app)
+
+session_handler = SessionHandler()
 
 
 @socketio.on("connect")
