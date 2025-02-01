@@ -1,16 +1,15 @@
 from core.model.timeline import Timeline
-from core.model.timeline_node import TimelineNode, TimelineConnection
 
 from flask_socketio import emit
 
 
 class EmittingTimeline(Timeline):
     def add_node(self, node):
-        emit("add-node", node.to_dict())
+        emit("add_node", node.to_dict())
         return super().add_node(node)
-    
+
     def add_arc(self, arc):
-        emit("add-arc", arc.to_dict())
+        emit("add_arc", arc.to_dict())
         return super().add_arc(arc)
 
 
@@ -21,20 +20,12 @@ class Session:
     def __init__(self):
         self.timeline = EmittingTimeline()
 
-    def add_node(self, node: TimelineNode):
-        self.timeline.add_node(node)
-        emit("add-node", node.to_dict())
-
     def log(self, msg: str):
         self.logs.append(msg)
         emit("add-log", {"msg": msg})
 
     def get_logger(self):
         return self.log
-
-    def add_arc(self, arc: TimelineConnection):
-        self.timeline.add_arc(arc)
-        emit("add-arc", arc.to_dict())
 
 
 class SessionHandler:

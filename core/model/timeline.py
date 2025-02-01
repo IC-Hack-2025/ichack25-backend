@@ -6,8 +6,8 @@ from core.model.timeline_node import TimelineNode, TimelineConnection
 
 
 class Timeline(DataModel):
-    heading: str
-    description: str
+    heading: Optional[str] = None
+    description: Optional[str] = None
     root_id: Optional[int] = None
     nodes: list[TimelineNode] = Field(default_factory=list)
     arcs: list[TimelineConnection] = Field(default_factory=list)

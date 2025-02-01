@@ -7,17 +7,17 @@ from core.model.timeline_node import TimelineContent, TimelineConnection, Connec
 
 class TimelineGenerator:
     @staticmethod
-    def generate_timeline(input_text: str) -> Timeline:
+    def generate_timeline(timeline: Timeline, input_text: str):
         result: EventPrompts.CheckIsEvent = EventPrompts.CheckIsEvent.do_query(input_text)
-        t = Timeline(heading=result.heading, description=result.description)
+        timeline.heading = result.heading
+        timeline.description = result.description
         root_node = TimelineNode(
             heading=result.heading,
             contents=[TimelineContent(content=result.short_description)],
             date_start=result.date_start,
             date_end=result.date_end,
         )
-        t.add_node(root_node)
-        return t
+        timeline.add_node(root_node)
 
     @staticmethod
     def continue_timeline(timeline: Timeline, max_new_nodes: int = None, continue_id: Optional[int] = None) -> Iterable[TimelineNode]:
