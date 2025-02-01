@@ -1,1 +1,1 @@
-from app.app import ichack25_app
+from app.app import ichack25_app, socketio

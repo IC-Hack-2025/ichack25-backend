@@ -14,9 +14,15 @@ if __name__ == "__main__":
 
     logging.info("Starting Backend")
 
-    from app import ichack25_app
+    from app import ichack25_app, socketio
 
     end_time = datetime.now()
     logging.info(f"--- Start up in {end_time - start_time} seconds ---")
 
-    ichack25_app.run(host="0.0.0.0", port=5000, threaded=True, debug=True, use_reloader=False)
+    socketio.run(
+        ichack25_app,
+        host="0.0.0.0",
+        port=5000,
+        debug=True,
+        use_reloader=False
+    )

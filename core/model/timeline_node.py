@@ -35,4 +35,3 @@ class TimelineConnection(DataModel):
     to_id: int
 
     connection_type: ConnectionType = Field(ConnectionType.CAUSED)
-
