@@ -3,13 +3,11 @@ import logging
 import flask
 import flask_cors
 import flask_socketio
-
 from datetime import date
-
-from core.process.timeline_generate import query_openai
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
 from app.session_handler import SessionHandler
+from core.process.timeline_generator import TimelineGenerator
 
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
@@ -77,11 +75,10 @@ def query_create():
         flask.abort(400)
 
     logging.info(f"Creating an event query: {query_text}")
-    result = query_openai(
-        f"Tell me the events that were directly caused by or indirectly influenced by '{query_text}'. "
-        f"List just their names and dates, no descriptions. Don't say any other text."
-    )
-    return result
+    tg = TimelineGenerator()
+    timeline = tg.generate_timeline(query_text)
+    _ = [_ for _ in tg.continue_timeline(timeline)]
+    return timeline.to_json()
 
 
 logging.info(
