@@ -19,6 +19,9 @@ class ContentType(aenum.StrEnum):
     URL = "url"
     CITATION = "citation"
 
+class ConnectionType(aenum.StrEnum):
+    CAUSED = "caused"
+    INFLUENCED = "influenced"
 
 class TimelineContent(DataModel):
     content_type: ContentType = Field(ContentType.TEXT)
@@ -27,8 +30,6 @@ class TimelineContent(DataModel):
 
 class TimelineNode(DataModel):
     id: int = Field(default_factory=next_id, frozen=True)
-    parents: list[int] = Field(default_factory=list)
-    children: list[int] = Field(default_factory=list)
 
     heading: str
     date_start: date
@@ -36,3 +37,9 @@ class TimelineNode(DataModel):
 
     contents: list[TimelineContent] = Field(default_factory=list)
     misconceptions: list[str] = Field(default_factory=list)
+
+class TimelineConnection(DataModel):
+    from_id: int
+    to_id: int
+
+    connection_type: ConnectionType = Field(ConnectionType.CAUSED)
