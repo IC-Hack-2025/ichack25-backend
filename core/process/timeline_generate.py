@@ -1,23 +1,11 @@
-from typing import List, Optional, Iterator, Type
+from typing import List, Optional, Iterator
 from pydantic import BaseModel
-from openai import OpenAI
-from core.model.timeline_node import ConnectionType, ContentType, TimelineConnection, TimelineContent, TimelineNode
+from ai import query_openai
+from core.model.timeline_node import ConnectionType, TimelineConnection, TimelineNode, TimelineContent
+import dateutil
 
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv(".env.local")
 
-EVENT_GRAPH_DEPTH = 3
-client = OpenAI()
-
-def get_response(content: str, response_type: Type[BaseModel]) -> Optional[BaseModel]:
-    return client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "user", "content": content},
-        ],
-        response_format=response_type
-    ).choices[0].message.parsed
+EVENT_GRAPH_DEPTH: int = 3
 
 
 class EventBaseResponse(BaseModel):
@@ -35,6 +23,7 @@ class MisconceptionResponse(BaseModel):
 
 
 class EventGraph:
+
     def __init__(self, start_event: str, depth: int = EVENT_GRAPH_DEPTH):
         self.start = start_event
         self.depth = depth
@@ -46,23 +35,33 @@ class EventGraph:
             return
         base_info: EventBaseResponse = self.get_base_info(event_name)
         misconceptions: MisconceptionResponse = self.get_misconceptions(event_name)
-        desc_content: TimelineContent = TimelineContent(content_type=ContentType.TEXT,
-                                                        content=base_info.desc)
-        node = TimelineNode(heading=base_info.heading,
-                            date_start=base_info.date_start,
-                            date_end=base_info.date_end,
-                            contents=[desc_content],
-                            misconceptions=misconceptions.misconceptions)
+        try:
+            date_start = dateutil.parser.parse(base_info.date_start, fuzzy=True)
+        except ValueError:
+            date_start = base_info.date_start
+        try:
+            date_end = dateutil.parser.parse(base_info.date_end, fuzzy=True)
+        except ValueError:
+            date_end = base_info.date_end
+        node = TimelineNode(
+            heading=base_info.heading,
+            date_start=date_start,
+            date_end=date_end,
+        )
+        node.contents = [TimelineContent(content=base_info.desc)]
+        node.misconceptions = misconceptions.misconceptions
+
         yield node
+
         for causedEvent in base_info.causedEvents:
             for out in self.get(causedEvent, curr_depth + 1):
-                yield out
                 if isinstance(out, TimelineNode):
                     edge = TimelineConnection(
                         from_id=node.id,
                         to_id=out.id,
                         connection_type=ConnectionType.CAUSED)
                     yield edge
+
         for influencedEvent in base_info.influencedEvents:
             for out in self.get(influencedEvent, curr_depth + 1):
                 yield out
@@ -74,10 +73,17 @@ class EventGraph:
                     yield edge
 
     def get_base_info(self, event_name: str) -> EventBaseResponse:
-        return get_response(f"Describe {event_name} in a short paragraph. Also give the names of any events it caused, and any events it influenced.", EventBaseResponse)
+        return query_openai(
+            f"Describe {event_name} in a short paragraph. Also give the names of any events it caused, "
+            f"and any events it influenced.",
+            EventBaseResponse
+        )
+
     def get_misconceptions(self, event_name: str) -> MisconceptionResponse:
-        return get_response(f"Give some common misconceptions about {event_name} and their debunking arguments.",
-                            MisconceptionResponse)
+        return query_openai(
+            f"Give some common misconceptions about {event_name} and their debunking arguments.",
+            MisconceptionResponse
+        )
 
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
+from typing import Union
+
 import aenum
 from pydantic import Field
 from core.model.data_model import DataModel
@@ -17,14 +19,14 @@ class ConnectionType(aenum.StrEnum):
 
 
 class TimelineContent(DataModel):
-    content_type: ContentType = Field(ContentType.TEXT)
+    content_type: ContentType = Field(default=ContentType.TEXT)
     content: str
 
 
 class TimelineNode(DataModel):
     heading: str
-    date_start: date
-    date_end: date
+    date_start: Union[date, str]
+    date_end: Union[date, str]
 
     contents: list[TimelineContent] = Field(default_factory=list)
     misconceptions: list[str] = Field(default_factory=list)

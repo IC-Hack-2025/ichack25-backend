@@ -6,7 +6,7 @@ import flask_socketio
 
 from datetime import date
 
-from ai import query_openai
+from core.process.timeline_generate import query_openai
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
 
