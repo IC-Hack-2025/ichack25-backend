@@ -18,7 +18,7 @@ class Session:
     def log(self, msg: str):
         self.logs.append(msg)
         emit("add-log", {"msg": msg})
-    
+
     def get_logger(self):
         return self.log
 
@@ -28,13 +28,14 @@ class Session:
 
 
 class SessionHandler:
-    sessions: dict[int, Session]
+    sessions: dict[str, Session]
 
     def __init__(self):
-        self.sessions = []
+        self.sessions = dict()
 
     def get_session(self, session_id: int) -> Session:
         return self.sessions.get(session_id, Session())
 
-    def clear_session(self, session_id: int):
-        self.sessions.pop(session_id)
+    def clear_session(self, session_id: str):
+        if session_id in self.sessions:
+            self.sessions.pop(session_id)
