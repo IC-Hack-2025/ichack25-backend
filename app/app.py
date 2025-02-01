@@ -27,6 +27,7 @@ def handle_connect():
 
 @socketio.on("disconnect")
 def handle_disconnect():
+    session_handler.clear_timeline(flask.request.sid)
     logging.info("client disconnected")
 
 
