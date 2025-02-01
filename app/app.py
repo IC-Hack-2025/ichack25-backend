@@ -11,7 +11,7 @@ cors = flask_cors.CORS(ichack25_app, supports_credentials=True)
 
 @ichack25_app.route('/')
 def index():
-    return "Hello World!"
+    return "Hello Dev!"
 
 
 logging.info(
