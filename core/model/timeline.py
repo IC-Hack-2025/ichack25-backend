@@ -16,3 +16,6 @@ class Timeline(DataModel):
         self.nodes.append(node)
         if self.root_id is None:
             self.root_id = node.id
+
+    def add_arc(self, arc: TimelineConnection):
+        self.arcs.append(arc)

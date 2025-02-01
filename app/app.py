@@ -9,7 +9,7 @@ from datetime import date
 from ai import query_openai
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
-from app.session_handler import SessionHandler
+from app.session import SessionHandler
 
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
@@ -27,7 +27,7 @@ def handle_connect():
 
 @socketio.on("disconnect")
 def handle_disconnect():
-    session_handler.clear_timeline(flask.request.sid)
+    session_handler.clear_session(flask.request.sid)
     logging.info("client disconnected")
 
 
