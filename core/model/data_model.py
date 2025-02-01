@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, Self, ClassVar
 import pydantic
-from pydantic import ConfigDict, field_serializer, model_validator
 from pydantic_core import PydanticSerializationError
 from util.file import project_standard_path_format, from_project_standard_path_format
 from util.time import timedelta_to_h_m_s_micro_str
@@ -14,10 +13,21 @@ _renamed = {f"_{p}" for p in _to_rename}
 
 class DataModel(pydantic.BaseModel):
 
-    model_config = ConfigDict(
+    _id: int = pydantic.PrivateAttr()
+    _id_counter: ClassVar[int] = 0
+
+    model_config = pydantic.ConfigDict(
         extra="ignore",
         use_enum_values=True
     )
+
+    def __init__(self, **data: Any):
+        super().__init__(**data)
+        cls = self.__class__
+        if not hasattr(cls, "_id_counter"):
+            setattr(cls, "_id_counter", 0)
+        self._id = cls._id_counter
+        setattr(cls, "_id_counter", getattr(cls, "_id_counter") + 1)
 
     def __dir__(self):
         d = [
@@ -35,6 +45,11 @@ class DataModel(pydantic.BaseModel):
         if key in _renamed:
             key = key.strip("_")
         return super().__setattr__(key, value)
+
+    @pydantic.computed_field
+    @property
+    def id(self) -> int:
+        return self._id
 
     def to_dict(self, mode="json", exclude_none=False, exclude_defaults=False):
         return self.model_dump(mode=mode, exclude_none=exclude_none, exclude_defaults=exclude_defaults)
@@ -70,7 +85,7 @@ class DataModel(pydantic.BaseModel):
             j_str = fp.read()
         return cls.model_validate_json(j_str, strict=False, context=context)
 
-    @field_serializer("*", when_used="json")
+    @pydantic.field_serializer("*", when_used="json")
     @classmethod
     def _serialize_field(cls, value: Any) -> Any:
         if isinstance(value, datetime):
@@ -83,7 +98,7 @@ class DataModel(pydantic.BaseModel):
             return project_standard_path_format(value)
         return value
 
-    @model_validator(mode="after")
+    @pydantic.model_validator(mode="after")
     @classmethod
     def _path_validator(cls, instance: Self) -> Self:
         for field, field_info in instance.model_fields.items():
