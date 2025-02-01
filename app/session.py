@@ -4,12 +4,22 @@ from core.model.timeline_node import TimelineNode, TimelineConnection
 from flask_socketio import emit
 
 
+class EmittingTimeline(Timeline):
+    def add_node(self, node):
+        emit("add-node", node.to_dict())
+        return super().add_node(node)
+    
+    def add_arc(self, arc):
+        emit("add-arc", arc.to_dict())
+        return super().add_arc(arc)
+
+
 class Session:
-    timeline: Timeline
+    timeline: EmittingTimeline
     logs: list[str]
 
     def __init__(self):
-        self.timeline = Timeline()
+        self.timeline = EmittingTimeline()
 
     def add_node(self, node: TimelineNode):
         self.timeline.add_node(node)

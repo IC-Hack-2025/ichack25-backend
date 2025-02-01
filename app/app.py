@@ -22,13 +22,13 @@ session_handler = SessionHandler()
 
 @socketio.on("connect")
 def handle_connect():
-    logging.info("client connected")
+    logging.info(f"client ${flask.request.sid} connected")
 
 
 @socketio.on("disconnect")
 def handle_disconnect():
     session_handler.clear_session(flask.request.sid)
-    logging.info("client disconnected")
+    logging.info(f"client ${flask.request.sid} disconnected")
 
 
 @socketio.on("request-timeline")
