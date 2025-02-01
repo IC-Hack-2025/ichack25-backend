@@ -31,6 +31,7 @@ def event(event: str):
     logging.info(f"fetching information about '{event}'")
 
     return Timeline(
+        root_id=-1,
         nodes=[
             TimelineNode(
                 heading="Placeholder",
