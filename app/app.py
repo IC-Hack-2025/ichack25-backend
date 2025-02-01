@@ -17,11 +17,6 @@ cors = flask_cors.CORS(ichack25_app, supports_credentials=True)
 socketio = flask_socketio.SocketIO(ichack25_app)
 
 
-@ichack25_app.route('/')
-def index():
-    return flask.render_template('debug.html')
-
-
 @socketio.on("connect")
 def handle_connect():
     logging.info("client connected")
@@ -30,6 +25,21 @@ def handle_connect():
 @socketio.on("disconnect")
 def handle_disconnect():
     logging.info("client disconnected")
+
+
+@socketio.on("request-timeline")
+def handle_request_timeline(data: str):
+    raise NotImplementedError()
+
+
+@socketio.on("extend-timeline")
+def handle_extend_timeline(node_id: str):
+    raise NotImplementedError()
+
+
+@ichack25_app.route('/')
+def index():
+    return flask.render_template('debug.html')
 
 
 @ichack25_app.route('/after/<event>', methods=['GET'], )
