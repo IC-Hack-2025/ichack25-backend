@@ -9,6 +9,7 @@ from datetime import date
 from core.process.timeline_generate import query_openai
 from core.model.timeline import Timeline
 from core.model.timeline_node import TimelineNode
+from app.session_handler import SessionHandler
 
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
@@ -16,10 +17,7 @@ ichack25_app.url_map.strict_slashes = False
 cors = flask_cors.CORS(ichack25_app, supports_credentials=True)
 socketio = flask_socketio.SocketIO(ichack25_app)
 
-
-@ichack25_app.route('/')
-def index():
-    return flask.render_template('debug.html')
+session_handler = SessionHandler()
 
 
 @socketio.on("connect")
@@ -29,7 +27,23 @@ def handle_connect():
 
 @socketio.on("disconnect")
 def handle_disconnect():
+    session_handler.clear_timeline(flask.request.sid)
     logging.info("client disconnected")
+
+
+@socketio.on("request-timeline")
+def handle_request_timeline(data: str):
+    raise NotImplementedError()
+
+
+@socketio.on("extend-timeline")
+def handle_extend_timeline(node_id: str):
+    raise NotImplementedError()
+
+
+@ichack25_app.route('/')
+def index():
+    return flask.render_template('debug.html')
 
 
 @ichack25_app.route('/after/<event>', methods=['GET'], )
