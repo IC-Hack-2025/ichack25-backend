@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Optional
 
 from ai.prompts.event_prompts import EventPrompts
 from core.model import Timeline, TimelineNode
@@ -20,8 +20,10 @@ class TimelineGenerator:
         return t
 
     @staticmethod
-    def continue_timeline(timeline: Timeline, max_new_nodes: int = None) -> Iterable[TimelineNode]:
-        event_to_continue_from = [n for n in timeline.nodes if n.id == timeline.root_id][0]
+    def continue_timeline(timeline: Timeline, max_new_nodes: int = None, continue_id: Optional[int] = None) -> Iterable[TimelineNode]:
+        if continue_id is None:
+            continue_id = timeline.root_id
+        event_to_continue_from = [n for n in timeline.nodes if n.id == continue_id][0]
         result: EventPrompts.ContinueEvents = EventPrompts.ContinueEvents.do_query(
             event_to_continue_from, max_new_nodes
         )
@@ -52,5 +54,5 @@ class TimelineGenerator:
                 )
                 prev_event.connections.append(tc)
                 new_event.connections.append(tc)
-                timeline.arcs.append(tc)
+                timeline.add_arc(tc)
             yield new_event
