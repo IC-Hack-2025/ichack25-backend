@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from core.model.data_model import DataModel
 from datetime import date
 
