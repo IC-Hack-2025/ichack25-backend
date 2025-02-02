@@ -24,6 +24,9 @@ class Session:
     def log(self, msg: str):
         self.logs.append(msg)
         emit("add-log", {"msg": msg})
+    
+    def clear_timeline(self):
+        self.timeline = EmittingTimeline()
 
     def get_logger(self):
         return self.log
