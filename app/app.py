@@ -28,6 +28,9 @@ def handle_disconnect():
 
 @socketio.on("request_timeline")
 def handle_request_timeline(data: str):
+    if data is not str:
+        return
+
     session = session_handler.get_session(flask.request.sid)
     TimelineGenerator.generate_timeline(session.timeline, data)
     [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3)]
@@ -36,6 +39,9 @@ def handle_request_timeline(data: str):
 
 @socketio.on("extend_timeline")
 def handle_extend_timeline(node_id: int):
+    if node_id is not int:
+        return
+
     session = session_handler.get_session(flask.request.sid)
     [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3, node_id)]
     flask_socketio.emit("transmission_finished")
