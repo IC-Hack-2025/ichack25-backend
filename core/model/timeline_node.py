@@ -27,6 +27,7 @@ class TimelineContent(DataModel):
 class TimelineTextContent(TimelineContent):
     content_type: ContentType = Field(default=ContentType.TEXT)
     content: str
+    isText: bool = True
 
 
 class TimelineImageContent(TimelineContent):
@@ -34,6 +35,7 @@ class TimelineImageContent(TimelineContent):
     title: str
     image_url: str
     link: str
+    isText: bool = False
 
 
 class TimelineConnection(DataModel):
