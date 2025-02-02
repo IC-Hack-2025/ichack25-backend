@@ -1,7 +1,8 @@
 from typing import List, Optional, Iterator
 from pydantic import BaseModel
 from ai import query_openai
-from core.model.timeline_node import ConnectionType, TimelineConnection, TimelineNode, TimelineContent
+from core.model.timeline_node import ConnectionType, TimelineConnection, TimelineNode, TimelineContent, \
+    TimelineTextContent
 import dateutil
 
 
@@ -48,7 +49,7 @@ class EventGraph:
             date_start=date_start,
             date_end=date_end,
         )
-        node.contents = [TimelineContent(content=base_info.desc)]
+        node.contents = [TimelineTextContent(content=base_info.desc)]
         node.misconceptions = misconceptions.misconceptions
 
         yield node

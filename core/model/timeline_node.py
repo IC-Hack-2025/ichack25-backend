@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import aenum
 from pydantic import Field
@@ -21,8 +21,19 @@ class ConnectionType(aenum.StrEnum):
 
 
 class TimelineContent(DataModel):
+    content_type: ContentType
+
+
+class TimelineTextContent(TimelineContent):
     content_type: ContentType = Field(default=ContentType.TEXT)
     content: str
+
+
+class TimelineImageContent(TimelineContent):
+    content_type: ContentType = Field(default=ContentType.IMAGE, frozen=True)
+    title: str
+    image_url: str
+    link: str
 
 
 class TimelineConnection(DataModel):
@@ -36,12 +47,13 @@ class TimelineNode(DataModel):
     heading: str
     date_start: Union[date, str]
     date_end: Union[date, str]
+    main_image_url: Optional[TimelineImageContent] = None
     contents: list[TimelineContent] = Field(default_factory=list)
     connections: list[TimelineConnection] = Field(default_factory=list)
 
     @property
     def full_description(self):
-        return f" ".join(c.content for c in self.contents if c.content_type == ContentType.TEXT)
+        return f" ".join(c.content for c in self.contents if type(c) is TimelineTextContent)
 
     @property
     def arcs_in(self) -> list[TimelineConnection]:

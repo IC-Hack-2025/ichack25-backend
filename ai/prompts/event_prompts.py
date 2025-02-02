@@ -107,6 +107,7 @@ Instruction steps:
             relevancy_type: Literal["caused", "influenced"]
 
         description: str
+        key_searches: List[str]
         relevant_events: List[RelevantEventItem]
         misconceptions: List[str]
 
@@ -149,6 +150,11 @@ Instruction steps:
     - "description" should be a string fully describing the event. The description should include some lines about 
         how the previous events that caused the event to occur are related to the input event. It is important to 
         describe the relevance of these events and give a detailed account of how they relate in the narrative.
+    - "key_searches" should be a list of internet search queries for important aspects of the input event, 
+        such as important figures involved in the event, or specific points of time in the event that are 
+        particularly significant or interesting, especially given the context. Design these queries to be similar to 
+        what an academic would search on the internet. If the event is not particularly significant, leave the list 
+        empty.  
     - "relevant_events" should be a list of items with the following structure:
         - "event_index" is an int equal to the index of the previous event that caused the 
             input event. The index MUST be present in the list of previous events.
