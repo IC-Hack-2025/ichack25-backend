@@ -3,6 +3,7 @@ import logging
 import flask
 import flask_cors
 import flask_socketio
+from time import sleep
 
 from core.model import Timeline
 from core.process.timeline_generator import TimelineGenerator
@@ -36,6 +37,7 @@ def handle_request_timeline(data: str):
     session = session_handler.get_session(flask.request.sid)
     TimelineGenerator.generate_timeline(session.timeline, data)
     [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3)]
+    sleep(1)
     flask_socketio.emit("transmission_finished")
 
 
@@ -46,6 +48,7 @@ def handle_extend_timeline(node_id: int):
 
     session = session_handler.get_session(flask.request.sid)
     [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3, node_id)]
+    sleep(1)
     flask_socketio.emit("transmission_finished")
 
 
