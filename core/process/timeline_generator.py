@@ -72,17 +72,29 @@ class TimelineGenerator:
             timeline.add_node(new_event)
             visited_events[i] = new_event
             yield new_event
+            connected_to_root = False
             for new_connection in child_event_result.relevant_events:
                 prev_event_index = new_connection.event_index
                 if prev_event_index not in visited_events:
                     continue
                 prev_event = visited_events[prev_event_index]
+                if prev_event.id == continue_id:
+                    connected_to_root = True
                 tc = TimelineConnection(
                     from_id=prev_event.id,
                     to_id=new_event.id,
                     connection_type=ConnectionType(new_connection.relevancy_type),
                 )
                 prev_event.connections.append(tc)
+                new_event.connections.append(tc)
+                timeline.add_arc(tc)
+            if not connected_to_root:
+                tc = TimelineConnection(
+                    from_id=continue_id,
+                    to_id=new_event.id,
+                    connection_type=ConnectionType(ConnectionType.CAUSED),
+                )
+                event_to_continue_from.connections.append(tc)
                 new_event.connections.append(tc)
                 timeline.add_arc(tc)
             i += 1

@@ -39,7 +39,7 @@ def handle_request_timeline(data: str):
     TimelineGenerator.generate_timeline(session.timeline, data)
     [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3)]
     sleep(1)
-    flask_socketio.emit("transmission_finished")
+    flask_socketio.emit("transmiss  ion_finished")
 
 
 @socketio.on("extend_timeline")
