@@ -1,5 +1,6 @@
 import socketio
 import json
+import logging
 
 
 sio = socketio.Client()
@@ -17,7 +18,7 @@ node_id = None
 def add_node(node):
     global node_id
     print("node added")
-    # print(node)
+    print(node['contents'])
     node_id = node.get("id")
 
 
@@ -32,9 +33,9 @@ def transmission_finished():
     print("transmission finished!")
 
 
-sio.connect("http://localhost:5000")
+sio.connect("http://127.0.0.1:5000")
 
-sio.emit("request_timeline", "Battle of hastings")
+sio.emit("request_timeline", "The Covid pandemic")
 
 input()
 

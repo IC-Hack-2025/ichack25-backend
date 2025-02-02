@@ -71,6 +71,7 @@ class TimelineGenerator:
                 new_event.contents.append(TimelineImageContent(title=title, image_url=image_url, link=link))
             timeline.add_node(new_event)
             visited_events[i] = new_event
+            yield new_event
             for new_connection in child_event_result.relevant_events:
                 prev_event_index = new_connection.event_index
                 if prev_event_index not in visited_events:
@@ -84,5 +85,4 @@ class TimelineGenerator:
                 prev_event.connections.append(tc)
                 new_event.connections.append(tc)
                 timeline.add_arc(tc)
-            yield new_event
             i += 1
