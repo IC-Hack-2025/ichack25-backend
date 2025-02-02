@@ -27,22 +27,23 @@ class TimelineGenerator:
         result: EventPrompts.ContinueEvents = EventPrompts.ContinueEvents.do_query(
             event_to_continue_from, max_new_nodes
         )
-        event_list = result.event_list
-        visited_events: dict[int, TimelineNode] = {}
-        for i, event_data in enumerate(event_list):
-            new_event_result = EventPrompts.DetailContinuedEvents.do_query(
+        child_event_list = result.event_list
+        visited_events: dict[int, TimelineNode] = {0: event_to_continue_from}
+        i = 1
+        for event_data in child_event_list:
+            child_event_result = EventPrompts.DetailContinuedEvents.do_query(
                 event_data,
                 [visited_events[j] for j in range(i)]
             )
             new_event = TimelineNode(
                 heading=event_data.heading,
-                contents=[TimelineContent(content=new_event_result.description)],
+                contents=[TimelineContent(content=child_event_result.description)],
                 date_start=event_data.date_start,
                 date_end=event_data.date_end,
             )
             timeline.add_node(new_event)
             visited_events[i] = new_event
-            for new_connection in new_event_result.relevant_events:
+            for new_connection in child_event_result.relevant_events:
                 prev_event_index = new_connection.event_index
                 if prev_event_index not in visited_events:
                     continue
@@ -56,3 +57,4 @@ class TimelineGenerator:
                 new_event.connections.append(tc)
                 timeline.add_arc(tc)
             yield new_event
+            i += 1
