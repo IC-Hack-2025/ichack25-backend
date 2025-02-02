@@ -2,7 +2,7 @@ from typing import Iterable, Optional
 
 from ai.prompts.event_prompts import EventPrompts
 from core.model import Timeline, TimelineNode
-from core.model.timeline_node import TimelineContent, TimelineConnection, ConnectionType
+from core.model.timeline_node import TimelineContent, TimelineConnection, ConnectionType, ContentType
 
 
 class TimelineGenerator:
@@ -13,7 +13,8 @@ class TimelineGenerator:
         timeline.description = result.description
         root_node = TimelineNode(
             heading=result.heading,
-            contents=[TimelineContent(content=result.short_description)],
+            contents=[TimelineContent(content=result.short_description)] +
+                     [TimelineContent(content=misconception, content_type=ContentType.MISCONCEPTION) for misconception in result.misconceptions],
             date_start=result.date_start,
             date_end=result.date_end,
         )
@@ -37,7 +38,8 @@ class TimelineGenerator:
             )
             new_event = TimelineNode(
                 heading=event_data.heading,
-                contents=[TimelineContent(content=child_event_result.description)],
+                contents=[TimelineContent(content=child_event_result.description)] +
+                         [TimelineContent(content=misconception, content_type=ContentType.MISCONCEPTION) for misconception in child_event_result.misconceptions],
                 date_start=event_data.date_start,
                 date_end=event_data.date_end,
             )

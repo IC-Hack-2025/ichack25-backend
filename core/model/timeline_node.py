@@ -11,6 +11,8 @@ class ContentType(aenum.StrEnum):
     VIDEO = "video"
     URL = "url"
     CITATION = "citation"
+    IMAGE = "image"
+    MISCONCEPTION = "misconception"
 
 
 class ConnectionType(aenum.StrEnum):

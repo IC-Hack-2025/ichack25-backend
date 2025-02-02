@@ -15,13 +15,15 @@ class EventPrompts:
         date_start: str
         date_end: str
         heading: str
+        misconceptions: List[str]
 
         @classmethod
         def _prompt(cls, user_text: str) -> str:
             prompt = f"""
 You are given an input text and your task is to determine whether or not it describes an event that is known to have 
 occurred. This event may have happened in real-world human history or fictional history. You are supposed to determine
-whether it has happened or whether it is a fakery (i.e. a conspiracy, or a misinformation).
+whether it has happened or whether it is a fakery (i.e. a conspiracy, or a misinformation). You are also supposed to
+include any common myths and misconceptions about the event
 
 [START OF INPUT TEXT]
 {user_text}
@@ -44,6 +46,9 @@ important thing is whether they are known to have happened as part of that narra
     - Give a precise date for when the event is said to have occurred. If the event occurred over a period of time, 
         set "date_start" to the start of the event and "date_end" to the end of the event. If the event happened within 
         a day, give the date AND time as one string for these values.
+    - "misconceptions" should be a list of strings, each of which outlining a common misconception about the event and
+    debunking evidence and arguments. Do not include duplicate myths. If there are no common misconceptions about the event, leave the list empty.
+    FILTER OUT ANY DUPLICATE MISCONCEPTIONS 
     - Finally, a brief heading for the event should be given in the "heading" key. Maximum one sentence, with a short 
         length if the event is given a specific name, or a medium length if there is no specific name for that event.
             """
@@ -103,13 +108,15 @@ Instruction steps:
 
         description: str
         relevant_events: List[RelevantEventItem]
+        misconceptions: List[str]
 
         @classmethod
         def _prompt(cls, current_event, previous_events: list[TimelineNode]) -> str:
             prompt = f"""
 You are given a short description of an event, as well as the relevant events that preceded it in the narrative. The
 narrative may be real-world or fictional. Your task is to fully describe the given event, with more detail than 
-given, as well as identify its connections to the previously listed events.
+given, as well as identify its connections to the previously listed events, and any common misconceptions about the
+event.
 
 [START OF THE INPUT EVENT]
 Heading: "{current_event.heading}"
@@ -150,5 +157,7 @@ Instruction steps:
             the causation of the input event. Use accepted interpretations of the history of the narrative context to 
             determine how relevant the event is. Don't use controversial opinions or misleading information / 
             misinformation.
+    - "misconceptions" should be a list of strings, each of which should outline the misconception and unequivocally give debunking arguments and evidence. 
+    Do not include duplicate misconceptions. If there are no common misconceptions about the event, leave the list empty. FILTER OUT DUPLICATE MISCONCEPTIONS
 """
             return prompt
