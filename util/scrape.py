@@ -1,3 +1,4 @@
+import logging
 import os
 import requests
 from dotenv import load_dotenv
@@ -21,7 +22,11 @@ def search_google_images(search, limit=1):
     }
 
     response = requests.post(url, json=payload, headers=headers)
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        logging.error(err)
+        return []
 
     results = response.json()
     images_list = results.get('images', [])
