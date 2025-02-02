@@ -12,8 +12,8 @@ from app.session import SessionHandler
 
 ichack25_app = flask.Flask(__name__, static_folder=None)
 ichack25_app.url_map.strict_slashes = False
-cors = flask_cors.CORS(ichack25_app, supports_credentials=True)
-socketio = flask_socketio.SocketIO(ichack25_app)
+flask_cors.CORS(ichack25_app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5000"}})
+socketio = flask_socketio.SocketIO(ichack25_app, cors_allowed_origins="*")
 
 session_handler = SessionHandler()
 
