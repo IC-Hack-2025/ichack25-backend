@@ -1,6 +1,7 @@
 from core.model.timeline import Timeline
 
 from flask_socketio import emit
+from collections import defaultdict
 
 
 class EmittingTimeline(Timeline):
@@ -29,13 +30,13 @@ class Session:
 
 
 class SessionHandler:
-    sessions: dict[str, Session]
+    sessions: defaultdict[str, Session]
 
     def __init__(self):
-        self.sessions = dict()
+        self.sessions = defaultdict(Session)
 
-    def get_session(self, session_id: int) -> Session:
-        return self.sessions.get(session_id, Session())
+    def get_session(self, session_id: str) -> Session:
+        return self.sessions[session_id]
 
     def clear_session(self, session_id: str):
         if session_id in self.sessions:

@@ -38,12 +38,10 @@ def handle_request_timeline(data: str):
 
 
 @socketio.on("extend_timeline")
-def handle_extend_timeline(node_id: str):
-    if not node_id.isdigit():
-        return
+def handle_extend_timeline(node_id: int):
     session = session_handler.get_session(flask.request.sid)
-    [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3, int(node_id))]
-    flask_socketio.emit("transmission finished")
+    [_ for _ in TimelineGenerator.continue_timeline(session.timeline, 3, node_id)]
+    flask_socketio.emit("transmission_finished")
 
 
 @ichack25_app.route('/')
